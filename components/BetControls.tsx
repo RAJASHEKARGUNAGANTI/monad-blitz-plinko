@@ -7,6 +7,10 @@ interface BetControlsProps {
   onPlay: (bet: string, rows: 8 | 12 | 16, risk: 0 | 1 | 2) => void;
   isPlaying: boolean;
   lastResult: { multiplier: number; payout: bigint; bet: bigint } | null;
+  rows: 8 | 12 | 16;
+  risk: 0 | 1 | 2;
+  onRowsChange: (r: 8 | 12 | 16) => void;
+  onRiskChange: (r: 0 | 1 | 2) => void;
 }
 
 const ROWS_OPTIONS: (8 | 12 | 16)[] = [8, 12, 16];
@@ -16,11 +20,9 @@ const RISK_OPTIONS: { value: 0 | 1 | 2; label: string }[] = [
   { value: 2, label: "High" },
 ];
 
-export function BetControls({ onPlay, isPlaying, lastResult }: BetControlsProps) {
+export function BetControls({ onPlay, isPlaying, lastResult, rows, risk, onRowsChange, onRiskChange }: BetControlsProps) {
   const { authenticated, login } = usePrivy();
   const [bet, setBet] = useState("0.01");
-  const [rows, setRows] = useState<8 | 12 | 16>(16);
-  const [risk, setRisk] = useState<0 | 1 | 2>(1);
 
   const handleHalf = () => {
     const v = parseFloat(bet);
@@ -57,6 +59,7 @@ export function BetControls({ onPlay, isPlaying, lastResult }: BetControlsProps)
         <label className="text-gray-400 text-xs mb-1 block">Bet Amount (MON)</label>
         <div className="flex gap-2">
           <input
+          title="bet"
             type="number"
             value={bet}
             onChange={(e) => setBet(e.target.value)}
@@ -78,7 +81,7 @@ export function BetControls({ onPlay, isPlaying, lastResult }: BetControlsProps)
           {RISK_OPTIONS.map((r) => (
             <button
               key={r.value}
-              onClick={() => setRisk(r.value)}
+              onClick={() => onRiskChange(r.value)}
               className={`flex-1 py-2 rounded-lg text-xs font-medium transition-colors ${
                 risk === r.value
                   ? "bg-[#836EF9] text-white"
@@ -98,7 +101,7 @@ export function BetControls({ onPlay, isPlaying, lastResult }: BetControlsProps)
           {ROWS_OPTIONS.map((r) => (
             <button
               key={r}
-              onClick={() => setRows(r)}
+              onClick={() => onRowsChange(r)}
               className={`flex-1 py-2 rounded-lg text-xs font-medium transition-colors ${
                 rows === r
                   ? "bg-[#836EF9] text-white"

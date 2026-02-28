@@ -19,7 +19,10 @@ export default function DashboardPage() {
   const [loadingStats, setLoadingStats] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
 
-  const address = wallets?.[0]?.address as `0x${string}` | undefined;
+  // Prefer MetaMask / external wallet — same logic as usePlinko play()
+  // wallets[0] can be the Privy embedded wallet (different address = no history found)
+  const wallet = wallets?.find((w) => w.walletClientType !== "privy") ?? wallets?.[0];
+  const address = wallet?.address as `0x${string}` | undefined;
 
   useEffect(() => {
     if (!authenticated) {

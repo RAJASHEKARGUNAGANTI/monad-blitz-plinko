@@ -220,17 +220,13 @@ export function usePlinko() {
     async (playerAddress: `0x${string}`, count = 50): Promise<LiveFeedEntry[]> => {
       if (!CONTRACT_ADDRESS) return [];
       try {
-        const latestBlock = await publicClient.getBlockNumber();
-        // 500 blocks on Monad (~8 min of history) — stays under RPC size limits
-        const fromBlock = latestBlock > 500n ? latestBlock - 500n : 0n;
-
+        // player is indexed so the node filters server-side — fromBlock: 0n is safe
         const events = await publicClient.getContractEvents({
           address: CONTRACT_ADDRESS,
           abi: PLINKO_ABI,
           eventName: "BallDropped",
           args: { player: playerAddress },
-          fromBlock,
-          toBlock: latestBlock,
+          fromBlock: 0n,
         });
 
         return events
