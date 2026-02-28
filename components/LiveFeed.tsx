@@ -15,7 +15,7 @@ export function LiveFeed() {
     setEntries(data);
     setLoading(false);
   }, [getLiveFeed]);
-
+ 
   useEffect(() => {
     fetchFeed();
     const interval = setInterval(fetchFeed, 5000); // poll every 5s
