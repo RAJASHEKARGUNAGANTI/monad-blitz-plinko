@@ -9,18 +9,21 @@ import { usePlinko, GameResult } from "@/hooks/usePlinko";
 
 export default function GamePage() {
   const { play, isPlaying, lastResult, error } = usePlinko();
-  // rows and risk live here so both BetControls and PlinkoBoard stay in sync
   const [rows, setRows] = useState<8 | 12 | 16>(16);
   const [risk, setRisk] = useState<0 | 1 | 2>(1);
   const [activeBucket, setActiveBucket] = useState<number | null>(null);
   const [showResult, setShowResult] = useState<GameResult | null>(null);
   const pendingResultRef = useRef<GameResult | null>(null);
+  // Mobile: controls panel collapsed by default
+  const [showControls, setShowControls] = useState(false);
 
   const handlePlay = useCallback(
     async (bet: string, r: 8 | 12 | 16, rk: 0 | 1 | 2) => {
       setActiveBucket(null);
       setShowResult(null);
       pendingResultRef.current = null;
+      // Auto-collapse controls on mobile when playing
+      setShowControls(false);
 
       const result = await play(bet, r, rk);
       if (result) {
@@ -39,20 +42,32 @@ export default function GamePage() {
   }, []);
 
   return (
-    <div className="flex gap-4 items-start">
-      {/* Left: Controls */}
-      <BetControls
-        onPlay={handlePlay}
-        isPlaying={isPlaying}
-        lastResult={lastResult}
-        rows={rows}
-        risk={risk}
-        onRowsChange={setRows}
-        onRiskChange={setRisk}
-      />
+    <div className="flex flex-col lg:flex-row gap-4 items-start">
 
-      {/* Center: Board */}
-      <div className="flex-1 flex flex-col items-center">
+      {/* Mobile-only: toggle button for controls */}
+      <button
+        onClick={() => setShowControls((v) => !v)}
+        className="lg:hidden w-full flex items-center justify-between px-4 py-3 bg-[#0f1923] border border-[#1e2d3d] rounded-xl text-sm text-gray-300 font-medium"
+      >
+        <span>⚙ Bet Controls</span>
+        <span className="text-[#836EF9]">{showControls ? "▲ Hide" : "▼ Show"}</span>
+      </button>
+
+      {/* Controls — always visible on lg+, toggled on mobile */}
+      <div className={`${showControls ? "block" : "hidden"} lg:block w-full lg:w-64 shrink-0`}>
+        <BetControls
+          onPlay={handlePlay}
+          isPlaying={isPlaying}
+          lastResult={lastResult}
+          rows={rows}
+          risk={risk}
+          onRowsChange={setRows}
+          onRiskChange={setRisk}
+        />
+      </div>
+
+      {/* Center: Board — always visible, full width on mobile */}
+      <div className="flex-1 w-full flex flex-col items-center">
         {error && (
           <div className="mb-3 w-full max-w-md bg-red-900/30 border border-red-700 rounded-lg px-4 py-3 text-red-400 text-sm text-center">
             {error}
@@ -70,10 +85,12 @@ export default function GamePage() {
         </div>
       </div>
 
-      {/* Right: Live Feed */}
-      <LiveFeed />
+      {/* Live Feed — hidden on mobile, visible on lg+ */}
+      <div className="hidden lg:block shrink-0">
+        <LiveFeed />
+      </div>
 
-      {/* Win/Loss popup — shown only after ball animation completes */}
+      {/* Win/Loss popup */}
       <WinDisplay result={showResult} onClose={() => setShowResult(null)} />
     </div>
   );

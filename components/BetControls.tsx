@@ -44,7 +44,7 @@ export function BetControls({ onPlay, isPlaying, lastResult, rows, risk, onRowsC
   const lastMultiplier = lastResult ? (lastResult.multiplier / 100).toFixed(2) : null;
 
   return (
-    <div className="w-64 bg-[#0f1923] border border-[#1e2d3d] rounded-xl p-4 flex flex-col gap-4">
+    <div className="sm:w-full lg:w-64 md:64 bg-[#0f1923] border border-[#1e2d3d] rounded-xl p-4 flex flex-col gap-4">
       {/* Last result badge */}
       {lastResult && (
         <div className={`text-center py-2 rounded-lg text-sm font-semibold ${won ? "bg-green-900/40 text-green-400" : "bg-red-900/40 text-red-400"}`}>
