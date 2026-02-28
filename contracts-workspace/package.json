@@ -1,0 +1,15 @@
+{
+  "name": "monad-plinko-contracts",
+  "version": "1.0.0",
+  "description": "Plinko smart contracts for Monad",
+  "scripts": {
+    "compile": "hardhat --config hardhat.config.cjs compile",
+    "deploy": "hardhat --config hardhat.config.cjs run scripts/deploy.cjs --network monadTestnet",
+    "test": "hardhat --config hardhat.config.cjs test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "dotenv": "^16.0.0",
+    "hardhat": "^2.22.0"
+  }
+}
